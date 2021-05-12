@@ -1,0 +1,23 @@
+{
+  "name": "jabber-talky",
+  "version": "1.0.0",
+  "description": "A chat app using a Node.js backend.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobPerez155/Jabber-Talky.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobPerez155/Jabber-Talky/issues"
+  },
+  "homepage": "https://github.com/RobPerez155/Jabber-Talky#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
