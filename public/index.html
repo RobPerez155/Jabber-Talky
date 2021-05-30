@@ -5,7 +5,10 @@
     </head>
     <body>
       Jabber Talky
-      <button id='increment'>+1</button> <!-- Functionality will come from chat.js-->
+      <form id='message-form'>
+        <input name='message' placeholder="Message">
+        <button>Send</button>
+      </form>
       <script src="/socket.io/socket.io.js"></script> <!-- This sets up our clientside of the socket.io library -->
       <script src="/js/chat.js"></script> <!-- This loads in our clientside script -->
     </body>

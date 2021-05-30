@@ -1,11 +1,14 @@
 // Here we will connect to the server using websockets
 const socket = io() // this allows us to send/receive events from both the server and the client
 
-socket.on('countUpdated', (count) => {   // on -> On event do ...
-  console.log(`The Count has been updated to ${count}`)
+socket.on('message', (message) => {
+  console.log(message)
 })
 
-document.querySelector('#increment').addEventListener('click', () => {
-  console.log('Clicked')
-  socket.emit('increment') // Sending info to the server
+document.querySelector('#message-form').addEventListener('submit', (event) => {
+  event.preventDefault()
+
+  const message = event.target.elements.message.value
+
+  socket.emit('sendMessage', message)
 })
