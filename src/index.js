@@ -26,6 +26,10 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
     io.emit('message', message) // io Sends a message to everyone
   })
 
+  socket.on('sendLocation', (coords) => {
+    io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`) // This will give us a clickable link to the location.
+  })
+
   socket.on('disconnect', () => {
     io.emit('message', 'A homieduck has left!')
   })
