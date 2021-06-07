@@ -19,10 +19,15 @@ app.use(express.static(publicDirectoryPath))
 io.on('connection', (socket) => { // here we are listening for a specific event to occur and socket is the callback
   console.log('New WebSocket Connection')
 
-  socket.emit('message', 'Welcome HomieDuck!')
+  socket.emit('message', 'Welcome HomieDuck!') // socket Sends message to current user only
+  socket.broadcast.emit('message', 'A new homieduck has joined!') // broadcast Sends message to everyone except current user
 
   socket.on('sendMessage', (message) => {
-    io.emit('message', message)
+    io.emit('message', message) // io Sends a message to everyone
+  })
+
+  socket.on('disconnect', () => {
+    io.emit('message', 'A homieduck has left!')
   })
 }) 
 
