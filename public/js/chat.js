@@ -33,7 +33,7 @@ document.querySelector('#send-location').addEventListener('click', () => {
     socket.emit('sendLocation', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
-    }, (sent) => {
+    }, () => { // This will be acknowledged in index.js #41 
       console.log('Location Sent')
     })
   })
