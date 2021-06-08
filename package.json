@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/RobPerez155/Jabber-Talky#readme",
   "dependencies": {
+    "bad-words": "^3.0.4",
     "express": "^4.16.4",
     "socket.io": "^2.2.0"
   }
