@@ -1,19 +1,44 @@
+// I AM Client
 // Here we will connect to the server using websockets
 const socket = io() // this allows us to send/receive events from both the server and the client
 
 // server (emit) -> client (receive) --acknowledgement--> server
 // client (emit) -> server (receive) --acknowledgement--> client
 
+// Elements
+const $messageForm = document.querySelector('#message-form') // $ Is a convention to let us know that is this is an element from the DOM
+const $messageFormInput = $messageForm.querySelector('input')
+const $messageFormButton = $messageForm.querySelector('button')
+const $sendLocationButton = document.querySelector('#send-location')
+const $messages = document.querySelector('#messages')
+
+// Templates
+const messageTemplate = document.querySelector('#message-template').innerHTML //.innerHTML is what we need in order to render our templates correctly
+
 socket.on('message', (message) => {
   console.log(message)
+  // this will store the final html that we will be rendering to the browser
+  const html = Mustache.render(messageTemplate, {
+    message // This takes a key value pair, here we will use the shorthand for message: message
+  }) // The second argument is an object of the data we want rendered
+  $messages.insertAdjacentHTML('beforeend', html) // tells us where to place the most recent message content
 })
 
-document.querySelector('#message-form').addEventListener('submit', (event) => {
+$messageForm.addEventListener('submit', (event) => {
   event.preventDefault()
 
+  // Disable the form to prevent multiple submissions
+  $messageFormButton.setAttribute('disabled', 'disabled')
+  
   const message = event.target.elements.message.value
 
   socket.emit('sendMessage', message, (error) => { // The acknowledgement will always be the last func to run, we can add a variable name to utilize the data sent from the server.
+
+    // Enable form after the sendMessage action is acknowledged by the server
+    $messageFormButton.removeAttribute('disabled')
+    $messageFormInput.value = '' // Clears message input
+    $messageFormInput.focus() // Focuses on input box for user to continue typing
+
     if (error) {
       return console.log(error)
     }
@@ -22,11 +47,14 @@ document.querySelector('#message-form').addEventListener('submit', (event) => {
   })
 })
 
-document.querySelector('#send-location').addEventListener('click', () => {
+$sendLocationButton.addEventListener('click', () => {
 
   if (!navigator.geolocation) { // Outdated browsers may not support geolocation
     return alert('Geolocation is not supported by your browser.')
   }
+
+  // Disable button
+  $sendLocationButton.setAttribute('disabled', 'disabled')
 
   navigator.geolocation.getCurrentPosition((position) => {
     // console.log(position.coords.latitude)
@@ -34,6 +62,8 @@ document.querySelector('#send-location').addEventListener('click', () => {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     }, () => { // This will be acknowledged in index.js #41 
+      // Enable button
+      $sendLocationButton.removeAttribute('disabled')
       console.log('Location Sent')
     })
   })
