@@ -24,6 +24,10 @@ socket.on('message', (message) => {
   $messages.insertAdjacentHTML('beforeend', html) // tells us where to place the most recent message content
 })
 
+socket.on('locationMessage', (url) => {
+  console.log(url)
+})
+
 $messageForm.addEventListener('submit', (event) => {
   event.preventDefault()
 

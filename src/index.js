@@ -37,8 +37,8 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
   })
 
   socket.on('sendLocation', (coords, callback) => {
-    io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`) // This will give us a clickable link to the location.
-    return callback()
+    io.emit('locationMessage', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`) // This will give us a clickable link to the location.
+    callback()
   })
 
   socket.on('disconnect', () => {
