@@ -14,6 +14,7 @@ const $messages = document.querySelector('#messages')
 
 // Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML //.innerHTML is what we need in order to render our templates correctly
+const locationTemplate = document.querySelector('#location-template').innerHTML
 
 socket.on('message', (message) => {
   console.log(message)
@@ -25,7 +26,10 @@ socket.on('message', (message) => {
 })
 
 socket.on('locationMessage', (url) => {
-  console.log(url)
+  const html = Mustache.render(locationTemplate, {
+    url
+  })
+  $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $messageForm.addEventListener('submit', (event) => {
