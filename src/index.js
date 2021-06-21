@@ -3,6 +3,7 @@ const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
+const { generateMessage } = require('./utils/messages.js')
 
 const app = express() // This generates a new express application
 const server = http.createServer(app)
@@ -20,9 +21,9 @@ app.use(express.static(publicDirectoryPath))
 io.on('connection', (socket) => { // here we are listening for a specific event to occur and socket is the callback
   console.log('New WebSocket Connection')
 
-  socket.emit('message', 'Welcome HomieDuck!') // socket Sends message to current user only
+  socket.emit('message', generateMessage('Welcome HomieDuck!')) // socket Sends message to current user only
   
-  socket.broadcast.emit('message', 'A new homieduck has joined!') // broadcast Sends message to everyone except current user
+  socket.broadcast.emit('message', generateMessage('A new homieduck has joined!')) // broadcast Sends message to everyone except current user
 
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter()
@@ -31,7 +32,7 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
       return callback('Profanity is not allowed!')
     }
     //else {
-    io.emit('message', message) // io Sends a message to everyone
+    io.emit('message', generateMessage(message)) // io Sends a message to everyone
     callback('Data from server') // This will acknowledge the event was successful, we can also send back data to the client from here 
     //}
   })
@@ -42,7 +43,7 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
   })
 
   socket.on('disconnect', () => {
-    io.emit('message', 'A homieduck has left!')
+    io.emit('message', generateMessage('A homieduck has left!'))
   })
 }) 
 

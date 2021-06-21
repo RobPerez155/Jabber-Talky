@@ -20,7 +20,7 @@ socket.on('message', (message) => {
   console.log(message)
   // this will store the final html that we will be rendering to the browser
   const html = Mustache.render(messageTemplate, {
-    message // This takes a key value pair, here we will use the shorthand for message: message
+    message: message.text // This takes a key value pair
   }) // The second argument is an object of the data we want rendered
   $messages.insertAdjacentHTML('beforeend', html) // tells us where to place the most recent message content
 })
