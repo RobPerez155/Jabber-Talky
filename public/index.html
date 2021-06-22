@@ -17,13 +17,13 @@
 
       <script id="message-template" type="text/html" >
         <div>
-          <p> {{message}} </p>  <!-- Dbl brackets are used to inject values using mustache, in this case those values will come from chat.js -->
+          <p> {{createdAt}} - {{message}} </p>  <!-- Dbl brackets are used to inject values using mustache, in this case those values will come from chat.js which uses the object template in messages.js -->
         </div>
       </script>
 
       <script id="location-template" type="text/html">
         <div>
-          <p><a href="{{url}}" target="_blank">My current location</a></p>          
+          <p> {{createdAt}} - <a href="{{url}}" target="_blank"> My current location</a></p>          
         </div>
       </script>
 

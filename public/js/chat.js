@@ -20,14 +20,16 @@ socket.on('message', (message) => {
   console.log(message)
   // this will store the final html that we will be rendering to the browser
   const html = Mustache.render(messageTemplate, {
-    message: message.text // This takes a key value pair
+    message: message.text, // This takes a key value pair
+    createdAt: moment(message.createdAt).format('h:mm a')
   }) // The second argument is an object of the data we want rendered
   $messages.insertAdjacentHTML('beforeend', html) // tells us where to place the most recent message content
 })
 
 socket.on('locationMessage', (url) => {
   const html = Mustache.render(locationTemplate, {
-    url
+    url,
+    createdAt: moment(url.createdAt).format('h:mm a')
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
