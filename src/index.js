@@ -21,9 +21,15 @@ app.use(express.static(publicDirectoryPath))
 io.on('connection', (socket) => { // here we are listening for a specific event to occur and socket is the callback
   console.log('New WebSocket Connection')
 
-  socket.emit('message', generateMessage('Welcome HomieDuck!')) // socket Sends message to current user only
-  
-  socket.broadcast.emit('message', generateMessage('A new homieduck has joined!')) // broadcast Sends message to everyone except current user
+  socket.on('join', ({ username, room}) => {
+    socket.join(room) // this allows users to send messages to a specific room
+    
+    socket.emit('message', generateMessage('Welcome HomieDuck!')) // socket Sends message to current user only
+    
+    // io.to.emit, socket.broadcast.to.emit - used to send messages in a specific room
+    socket.broadcast.to(room).emit('message', generateMessage(`Homieduck ${username} has joined!`)) // broadcast.to sends message to everyone in the room except current user
+
+  })
 
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter()
@@ -32,7 +38,7 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
       return callback('Profanity is not allowed!')
     }
     //else {
-    io.emit('message', generateMessage(message)) // io Sends a message to everyone
+    io.to('log').emit('message', generateMessage(message)) // io Sends a message to everyone
     callback('Data from server') // This will acknowledge the event was successful, we can also send back data to the client from here 
     //}
   })

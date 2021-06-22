@@ -16,6 +16,9 @@ const $messages = document.querySelector('#messages')
 const messageTemplate = document.querySelector('#message-template').innerHTML //.innerHTML is what we need in order to render our templates correctly
 const locationTemplate = document.querySelector('#location-template').innerHTML
 
+//Options - Parses the params into an object
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true }) // We are destructuring the object
+
 socket.on('message', (message) => {
   console.log(message)
   // this will store the final html that we will be rendering to the browser
@@ -78,3 +81,5 @@ $sendLocationButton.addEventListener('click', () => {
     })
   })
 })
+
+socket.emit('join', { username, room })
