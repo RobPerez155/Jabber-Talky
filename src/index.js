@@ -4,6 +4,7 @@ const express = require('express')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 const { generateMessage, generateLocationMessage } = require('./utils/messages.js')
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
 
 const app = express() // This generates a new express application
 const server = http.createServer(app)
@@ -21,14 +22,21 @@ app.use(express.static(publicDirectoryPath))
 io.on('connection', (socket) => { // here we are listening for a specific event to occur and socket is the callback
   console.log('New WebSocket Connection')
 
-  socket.on('join', ({ username, room}) => {
-    socket.join(room) // this allows users to send messages to a specific room
+  socket.on('join', ({ username, room}, callback) => {
+    const {error, user } = addUser({ id: socket.id, username, room })
+    
+    if (error) {
+      return callback(error)
+    }
+
+    socket.join(user.room) // this allows users to send messages to a specific room
     
     socket.emit('message', generateMessage('Welcome HomieDuck!')) // socket Sends message to current user only
     
     // io.to.emit, socket.broadcast.to.emit - used to send messages in a specific room
-    socket.broadcast.to(room).emit('message', generateMessage(`Homieduck ${username} has joined!`)) // broadcast.to sends message to everyone in the room except current user
+    socket.broadcast.to(user.room).emit('message', generateMessage(`Homieduck ${user.username} has joined!`)) // broadcast.to sends message to everyone in the room except current user
 
+    callback()
   })
 
   socket.on('sendMessage', (message, callback) => {
@@ -49,7 +57,12 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
   })
 
   socket.on('disconnect', () => {
-    io.emit('message', generateMessage('A homieduck has left!'))
+    const user = removeUser(socket.id)
+
+    if (user) {
+      io.to(user.room).emit('message', generateMessage(`Homieduck ${user.username} has left!`))
+    }
+
   })
 }) 
 
