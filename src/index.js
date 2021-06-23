@@ -31,28 +31,31 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
 
     socket.join(user.room) // this allows users to send messages to a specific room
     
-    socket.emit('message', generateMessage('Welcome HomieDuck!')) // socket Sends message to current user only
+    socket.emit('message', generateMessage('Admin','Welcome HomieDuck!')) // socket Sends message to current user only
     
     // io.to.emit, socket.broadcast.to.emit - used to send messages in a specific room
-    socket.broadcast.to(user.room).emit('message', generateMessage(`Homieduck ${user.username} has joined!`)) // broadcast.to sends message to everyone in the room except current user
+    socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `Homieduck ${user.username} has joined!`)) // broadcast.to sends message to everyone in the room except current user
 
     callback()
   })
 
   socket.on('sendMessage', (message, callback) => {
+    const user = getUser(socket.id)
     const filter = new Filter()
 
     if (filter.isProfane(message)) { // This scans the message for profanity before allowing it to be emitted
       return callback('Profanity is not allowed!')
     }
     //else {
-    io.to('log').emit('message', generateMessage(message)) // io Sends a message to everyone
+    io.to(user.room).emit('message', generateMessage(user.username, message)) // io Sends a message to everyone
     callback('Data from server') // This will acknowledge the event was successful, we can also send back data to the client from here 
     //}
   })
 
   socket.on('sendLocation', (coords, callback) => {
-    io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`)) // This will give us a clickable link to the location.
+    const user = getUser(socket.id)
+
+    io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`)) // This will give us a clickable link to the location.
     callback()
   })
 
@@ -60,7 +63,7 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
     const user = removeUser(socket.id)
 
     if (user) {
-      io.to(user.room).emit('message', generateMessage(`Homieduck ${user.username} has left!`))
+      io.to(user.room).emit('message', generateMessage('Admin', `Homieduck ${user.username} has left!`))
     }
 
   })
