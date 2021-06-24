@@ -32,7 +32,10 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
     socket.join(user.room) // this allows users to send messages to a specific room
     
     socket.emit('message', generateMessage('Admin','Welcome HomieDuck!')) // socket Sends message to current user only
-    
+    socket.to(user.room).emit('roomData', {
+      room: user.room,
+      users: getUsersInRoom(user.room)
+    })
     // io.to.emit, socket.broadcast.to.emit - used to send messages in a specific room
     socket.broadcast.to(user.room).emit('message', generateMessage('Admin', `Homieduck ${user.username} has joined!`)) // broadcast.to sends message to everyone in the room except current user
 
@@ -48,6 +51,7 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
     }
     //else {
     io.to(user.room).emit('message', generateMessage(user.username, message)) // io Sends a message to everyone
+     
     callback('Data from server') // This will acknowledge the event was successful, we can also send back data to the client from here 
     //}
   })
@@ -64,6 +68,10 @@ io.on('connection', (socket) => { // here we are listening for a specific event 
 
     if (user) {
       io.to(user.room).emit('message', generateMessage('Admin', `Homieduck ${user.username} has left!`))
+      io.to(user.room).emit('roomData', {
+        room: user.room,
+        users: getUsersInRoom(user.room)
+      })
     }
 
   })

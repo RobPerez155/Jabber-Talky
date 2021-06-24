@@ -15,6 +15,7 @@ const $messages = document.querySelector("#messages");
 // Templates
 const messageTemplate = document.querySelector("#message-template").innerHTML; //.innerHTML is what we need in order to render our templates correctly
 const locationTemplate = document.querySelector("#location-template").innerHTML;
+const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML
 
 //Options - Parses the params into an object
 const { username, room } = Qs.parse(location.search, {
@@ -40,6 +41,14 @@ socket.on("locationMessage", (url) => {
   });
   $messages.insertAdjacentHTML("beforeend", html);
 });
+
+socket.on("roomData", ({ room, users }) => { // Destructured room and users
+  const html = Mustache.render(sidebarTemplate, {
+    room,
+    users
+  })
+  document.querySelector("#sidebar").innerHTML = html
+})
 
 $messageForm.addEventListener("submit", (event) => {
   event.preventDefault();
