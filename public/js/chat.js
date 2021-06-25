@@ -22,6 +22,29 @@ const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
 }); // We are destructuring the object
 
+const autoscroll = () => {
+  // New message element
+  const $newMessage = $messages.lastElementChild // This will grab the last element as a child which will be the newest message
+
+  // Height of the new message
+  const newMessageStyles = getComputedStyle($newMessage) // This will determine what the margin bottom spacing is, do this instead of hardcoding the spacing. If the spacing is hardcoded and later the styling is changed then the autoscroll feature will break.
+  const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+  const newMessageHeight = $newMessage.offsetHeight + newMessageMargin
+
+  // Visible height
+  const visibleHeight = $messages.offsetHeight
+
+  // Height of messages container - This gives us the total height of messages that we can scroll through
+  const containerHeight = $messages.scrollHeight
+
+  // How far have I scrolled?
+  const scrollOffset = $messages.scrollTop + visibleHeight
+
+  if (containerHeight - newMessageHeight <= scrollOffset) {
+    $messages.scrollTop = $messages.scrollHeight
+  }
+}
+
 socket.on("message", (message) => {
   console.log(message);
   // this will store the final html that we will be rendering to the browser
@@ -31,6 +54,7 @@ socket.on("message", (message) => {
     createdAt: moment(message.createdAt).format("h:mm a"),
   }); // The second argument is an object of the data we want rendered
   $messages.insertAdjacentHTML("beforeend", html); // tells us where to place the most recent message content
+  autoscroll()
 });
 
 socket.on("locationMessage", (url) => {
@@ -40,6 +64,7 @@ socket.on("locationMessage", (url) => {
     createdAt: moment(url.createdAt).format("h:mm a"),
   });
   $messages.insertAdjacentHTML("beforeend", html);
+  autoscroll()
 });
 
 socket.on("roomData", ({ room, users }) => { // Destructured room and users
